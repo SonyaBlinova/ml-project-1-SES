@@ -28,9 +28,11 @@ def least_squares(y,tx):
     return w, loss
 
 def ridge_regression(y,tx,lambda_):
-    N = tx.shape[1]
-    w = np.linalg.solve((tx.T @ tx) + 2*N*lambda_*np.eye((N)), tx.T @ y)
-    loss = rmse_loss(y, tx, w)
+    """implement ridge regression."""
+    N=tx.shape[1]
+    I=np.eye(N)
+    w=np.linalg.solve(tx.T @ tx + 2*N*lambda_*I , tx.T @ y)
+    loss = compute_loss_ridge(y,tx,w,lambda_)
     return w, loss
 
 def logistic_regression(y,tx,initial_w,max_iters,gamma):

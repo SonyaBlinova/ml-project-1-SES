@@ -21,4 +21,7 @@ def mae_loss(error):
 def rmse_loss(error):
     return np.sqrt(compute_mse_loss(error)*2)
 
-
+def compute_loss_ridge(y,tx,w,lambda_):
+    e =  y - tx @ w
+    loss = np.mean(e**2) / 2
+    return loss
