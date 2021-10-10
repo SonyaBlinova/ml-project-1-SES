@@ -1,6 +1,10 @@
 import numpy as np
 #the cost functions
 
+def compute_loss(y,tx,w):
+    e = error(y,tx,w)
+    return np.mean(e**2) / 2
+
 def error(y,tx,w):
     return y - tx @ w
 
