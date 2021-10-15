@@ -88,32 +88,3 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         if start_index != end_index:
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
             
-def split_data(x, y, ratio, seed=1):
-    """
-    split the dataset based on the split ratio. If ratio is 0.8
-    you will have 80% of your data set dedicated to training
-    and the rest dedicated to testing
-    """
-    # set seed
-    np.random.seed(seed)
-    # ***************************************************
-    # split the data based on the given ratio
-    # return train and test data
-    # ***************************************************
-    shuffled = np.random.permutation(np.c_[x, y])
-    shuffled_x = shuffled[:,0:-1]
-    shuffled_y = shuffled[:,-1:]
-    split = int(ratio * shuffled_x.shape[0])
-    training_x = shuffled_x[:split]
-    training_y = shuffled_y[:split]
-    test_x = shuffled_x[split:]
-    test_y = shuffled_y[split:]
-    return training_x, test_x, training_y, test_y
-
-
-def accuracy(y_pred, y_test):
-    """
-    Returns the percentage of difference between two numpy arrays
-    """
-    diff = y_test - y_pred
-    return len(diff[diff==0])/len(diff)
