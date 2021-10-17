@@ -2,24 +2,107 @@ import numpy as np
 import matplotlib.pyplot as plt
 from utils import *
 
-def sigmoid(tx, w):
+def gradient_descent(df, y, tx, w_0, gamma, max_iter, return_all_steps = False):
     """
-    Sigmoid function
+    Minimization using gradient descent algorithm.
     
     Parameters
     ----------
+    df : function
+        Function takes as input (y, tx, w_0) end return gradient vector.
+    y : ndarray
+        Target values belonging to the set {-1, 1}.
+    tx : ndarray
+        Matrix of features.
+    w_0 : ndarray
+        Initial weights.
+    gamma : float
+        Grandient descent step.
+    max_iters : int
+        Number of iteration.
+    return_all_steps : bool, optional
+        If argument is true, than gradient_descent returns all steps calculated during minimization.
+        
+    Returns
+    -------
+    w : ndarray
+        Final weights.
+    all_steps : list of ndarray, optional
+        All steps calculated during minimization.
+    """
+    steps = [w_0.copy()]
+    for _ in range(max_iter):
+        w_0 = w_0 - gamma * df(y, tx, w_0)
+        steps += [w_0.copy()]
+        
+    if return_all_steps:
+        return w_0, steps
+    return w_0
+
+# def stochastic_gradient_descent(df, y, tx, w_0, gamma, max_iter, bath_size = 1, return_all_steps = False):
+#     pass
+def stochastic_gradient_descent(y, tx, initial_w, batch_size, max_iters, gamma):
+    """
+    Stochastic gradient descent algorithm.
+    
+    Parameters
+    ----------
+    y : ndarray
+        Target values belonging to the set {-1, 1}.
     tx : ndarray
         Matrix of features.
     initial_w : ndarray
         Initial weights.
+    batch_size : int
+        The size of a batch.
+    max_iters : int
+        Number of iteration.
+    gamma : float
+        Grandient descent step.
         
     Returns
     -------
-    sigmod : float
-        Value of the sigmoid function.
+    losses : list of ndarray
+        All losses calculated during minimization.
+    ws : list of ndarray
+        All weights calculated during minimization.
     """
     
-    return 1/(1 + np.exp(tx@w.T))
+    ws = [initial_w]
+    losses = []
+    w = initial_w
+    for n_iter in range(max_iters):
+        grad, loss = compute_stoch_gradient(y, tx, w)
+        w = w - gamma*grad
+        ws.append(w)
+        losses.append(loss)
+    return losses, ws
+
+def ridge_regression(y, tx, lambda_):
+    """
+    Minimization using ridge regression.
+    
+    Parameters
+    ----------
+    y : ndarray
+        Target values belonging to the set {-1, 1}.
+    tx : ndarray
+        Matrix of features.
+    lambda_ : float
+        Regularization parameter.
+        
+    Returns
+    -------
+    loss : float
+        Minimization loss.
+    w : ndarray
+        Final weights.
+    """
+    
+    N = tx.shape[1]
+    w = np.linalg.solve(tx.T @ tx + 2*N*lambda_*np.eye(N), tx.T @ y)
+    loss = compute_mse(y, tx, w)
+    return loss, w
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     """
@@ -28,7 +111,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     Parameters
     ----------
     y : ndarray
-        Target values belonging to the interval [0, 1].
+        Target values belonging to the set {-1, 1}.
     tx : ndarray
         Matrix of features.
     initial_w : ndarray
@@ -77,7 +160,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, plot_lo
     Parameters
     ----------
     y : np.array
-        Target values belonging to the interval [0, 1].
+        Target values belonging to the set {-1, 1}.
     tx : np.array
         Matrix of features.
     initial_w : np.array
