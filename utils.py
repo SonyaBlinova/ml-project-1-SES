@@ -1,6 +1,44 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+def gradient_descent(df, y, tx, w_0, gamma, max_iter, return_all_steps = False):
+    """
+    Minimization using gradient descent algorithm.
+    
+    Parameters
+    ----------
+    df : function
+        Function takes as input (y, tx, w_0) end return gradient vector.
+    y : ndarray
+        Target values belonging to the set {-1, 1}.
+    tx : ndarray
+        Matrix of features.
+    w_0 : ndarray
+        Initial weights.
+    gamma : float
+        Grandient descent step.
+    max_iters : int
+        Number of iteration.
+    return_all_steps : bool, optional
+        If argument is true, than gradient_descent returns all steps calculated during minimization.
+        
+    Returns
+    -------
+    w : ndarray
+        Final weights.
+    all_steps : list of ndarray, optional
+        All steps calculated during minimization.
+    """
+    steps = [w_0.copy()]
+    for _ in range(max_iter):
+        w_0 = w_0 - gamma * df(y, tx, w_0)
+        steps += [w_0.copy()]
+        
+    if return_all_steps:
+        return w_0, steps
+    return w_0
+
+
 def build_model_data(x, y):
     """
     Form (y,tX) to get regression data in matrix form.

@@ -2,48 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from utils import *
 
-def gradient_descent(df, y, tx, w_0, gamma, max_iter, return_all_steps = False):
+def least_squares_GD(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     """
-    Minimization using gradient descent algorithm.
-    
-    Parameters
-    ----------
-    df : function
-        Function takes as input (y, tx, w_0) end return gradient vector.
-    y : ndarray
-        Target values belonging to the set {-1, 1}.
-    tx : ndarray
-        Matrix of features.
-    w_0 : ndarray
-        Initial weights.
-    gamma : float
-        Grandient descent step.
-    max_iters : int
-        Number of iteration.
-    return_all_steps : bool, optional
-        If argument is true, than gradient_descent returns all steps calculated during minimization.
-        
-    Returns
-    -------
-    w : ndarray
-        Final weights.
-    all_steps : list of ndarray, optional
-        All steps calculated during minimization.
-    """
-    steps = [w_0.copy()]
-    for _ in range(max_iter):
-        w_0 = w_0 - gamma * df(y, tx, w_0)
-        steps += [w_0.copy()]
-        
-    if return_all_steps:
-        return w_0, steps
-    return w_0
-
-# def stochastic_gradient_descent(df, y, tx, w_0, gamma, max_iter, bath_size = 1, return_all_steps = False):
-#     pass
-def stochastic_gradient_descent(y, tx, initial_w, batch_size, max_iters, gamma):
-    """
-    Stochastic gradient descent algorithm.
+    Linear regression using gradient descent.
     
     Parameters
     ----------
@@ -53,30 +14,92 @@ def stochastic_gradient_descent(y, tx, initial_w, batch_size, max_iters, gamma):
         Matrix of features.
     initial_w : ndarray
         Initial weights.
-    batch_size : int
-        The size of a batch.
     max_iters : int
         Number of iteration.
     gamma : float
         Grandient descent step.
+    plot_loss : bool, optional
+        Clarification whether to draw a graph of changes in the loss function. Default False.
         
     Returns
     -------
-    losses : list of ndarray
-        All losses calculated during minimization.
-    ws : list of ndarray
-        All weights calculated during minimization.
+    w : ndarray
+        Final weights.
+    final_loss : float
+        Final minimization loss.
     """
+    def compute_loss(y, w):
+        return compute_mse(y, tx, w) 
+
+    def df(y, tx, w):
+        return (-1/y.shape[0])*np.dot(tx.T, y - np.dot(tx, w))
+        
+    w, steps = gradient_descent(df, y, tx, initial_w, gamma, max_iters, return_all_steps = True)
     
-    ws = [initial_w]
-    losses = []
-    w = initial_w
-    for n_iter in range(max_iters):
-        grad, loss = compute_stoch_gradient(y, tx, w)
-        w = w - gamma*grad
-        ws.append(w)
-        losses.append(loss)
-    return losses, ws
+    if plot_loss:
+        loss_info = []
+        for step in steps:
+            loss_info += [compute_loss(y, step)]
+        
+        plt.plot(loss_info)
+        plt.xlabel('iteration')
+        plt.ylabel('loss')
+        plt.show()
+    return w, compute_loss(y, w)
+
+def least_squares_SGD(y, tx, initial_w, max_iters, gamma, plot_loss = False):
+    """
+    Linear regression using stochastic gradient descent.
+    
+    Parameters
+    ----------
+    y : ndarray
+        Target values belonging to the set {-1, 1}.
+    tx : ndarray
+        Matrix of features.
+    initial_w : ndarray
+        Initial weights.
+    max_iters : int
+        Number of iteration.
+    gamma : float
+        Grandient descent step.
+    plot_loss : bool, optional
+        Clarification whether to draw a graph of changes in the loss function. Default False.
+        
+    Returns
+    -------
+    w : ndarray
+        Final weights.
+    final_loss : float
+        Final minimization loss.
+    """
+    def compute_loss(y, w):
+        return compute_mse(y, tx, w) 
+
+    def df(y, tx, w):
+        #Write here stochastic gradient, please
+        pass
+        
+    w, steps = gradient_descent(df, y, tx, initial_w, gamma, max_iters, return_all_steps = True)
+    
+    if plot_loss:
+        loss_info = []
+        for step in steps:
+            loss_info += [compute_loss(y, step)]
+        
+        plt.plot(loss_info)
+        plt.xlabel('iteration')
+        plt.ylabel('loss')
+        plt.show()
+    return w, compute_loss(y, w)
+
+
+def least_squares(y, tx):
+    """
+    Least squares regression using normal equations.
+    """
+    pass
+
 
 def ridge_regression(y, tx, lambda_):
     """
@@ -102,7 +125,7 @@ def ridge_regression(y, tx, lambda_):
     N = tx.shape[1]
     w = np.linalg.solve(tx.T @ tx + 2*N*lambda_*np.eye(N), tx.T @ y)
     loss = compute_mse(y, tx, w)
-    return loss, w
+    return w, loss
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     """
