@@ -37,7 +37,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     if plot_loss:
         loss_info = []
         for step in steps:
-            loss_info += [compute_loss(y, step)]
+            loss_info += [compute_mse(y, tx, step)]
         
         plt.plot(loss_info)
         plt.xlabel('iteration')
@@ -82,7 +82,7 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     if plot_loss:
         loss_info = []
         for step in steps:
-            loss_info += [compute_loss(y, step)]
+            loss_info += [compute_mse(y, tx, step)]
         
         plt.plot(loss_info)
         plt.xlabel('iteration')
