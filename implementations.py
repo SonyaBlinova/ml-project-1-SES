@@ -28,8 +28,6 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     final_loss : float
         Final minimization loss.
     """
-    def compute_loss(y, w):
-        return compute_mse(y, tx, w) 
 
     def df(y, tx, w):
         return (-1/y.shape[0])*np.dot(tx.T, y - np.dot(tx, w))
@@ -45,7 +43,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma, plot_loss = False):
         plt.xlabel('iteration')
         plt.ylabel('loss')
         plt.show()
-    return w, compute_loss(y, w)
+    return w, compute_mse(y, tx, w)
 
 def least_squares_SGD(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     """
@@ -73,12 +71,11 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     final_loss : float
         Final minimization loss.
     """
-    def compute_loss(y, w):
-        return compute_mse(y, tx, w) 
 
     def df(y, tx, w):
-        #Write here stochastic gradient, please
-        pass
+        batch_size = 1
+        y_batch, tx_batch = next(batch_iter(y, tx, batch_size=batch_size, num_batches=1, shuffle=True))
+        return (-1/y_batch.shape[0])*np.dot(tx_batch.T, y_batch - np.dot(tx_batch, w))
         
     w, steps = gradient_descent(df, y, tx, initial_w, gamma, max_iters, return_all_steps = True)
     
@@ -91,14 +88,29 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma, plot_loss = False):
         plt.xlabel('iteration')
         plt.ylabel('loss')
         plt.show()
-    return w, compute_loss(y, w)
+    return w, compute_mse(y, tx, w)
 
 
 def least_squares(y, tx):
     """
     Least squares regression using normal equations.
+    
+    Parameters
+    ----------
+    y : ndarray
+        Target values belonging to the set {-1, 1}.
+    tx : ndarray
+        Matrix of features.
+        
+    Returns
+    -------
+    w : ndarray
+        Final weights.
+    loss : float
+        Minimization loss.
     """
-    pass
+    w = np.linalg.solve(tx.T @ tx, tx.T @ y)
+    return w, compute_mse(y, tx, w)
 
 
 def ridge_regression(y, tx, lambda_):
@@ -116,16 +128,15 @@ def ridge_regression(y, tx, lambda_):
         
     Returns
     -------
-    loss : float
-        Minimization loss.
     w : ndarray
         Final weights.
+    loss : float
+        Minimization loss.
     """
     
     N = tx.shape[1]
     w = np.linalg.solve(tx.T @ tx + 2*N*lambda_*np.eye(N), tx.T @ y)
-    loss = compute_mse(y, tx, w)
-    return w, loss
+    return w, compute_mse(y, tx, w)
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     """
@@ -205,7 +216,6 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, plot_lo
     def compute_loss(y, w, lambda_ = 0):
         h = sigmoid(tx, w.T)
         loss = - 1/y.shape[0]*np.sum((y == 1)*np.log(h) + (y == -1)*np.log(1 - h))
-        loss += lambda_*np.sum(w**2)
         return loss 
     
     def df(y, tx, w):
