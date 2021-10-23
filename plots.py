@@ -2,13 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def cross_validation_visualization(lambds, mse_tr, mse_te):
+def cross_validation_visualization(lambds, mse_tr, mse_te, bd_left, bd_right):
     """visualization the curves of mse_tr and mse_te."""
     plt.semilogx(lambds, mse_tr, marker=".", color='b', label='train error')
     plt.semilogx(lambds, mse_te, marker=".", color='r', label='test error')
-    plt.xlabel("lambda")
-    plt.ylabel("rmse")
-    plt.xlim(1e-4, 1)
+    plt.xlabel("parameter")
+    plt.ylabel("mse")
+    plt.xlim(10**bd_left, 10**bd_right)
     plt.title("cross validation")
     plt.legend(loc=2)
     plt.grid(True)
