@@ -164,11 +164,6 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     final_loss : float
         Final minimization loss.
     """
-    def compute_loss(y, w):
-        h = sigmoid(tx, w)        
-        loss = - 1/y.shape[0]*np.sum((y == 1)*np.log(h) + (y == -1)*np.log(1 - h))
-        return loss 
-
     def df(y, tx, w):
         h = sigmoid(tx, w)
         return  1/y.shape[0]*((y == 1)*(1 - h) - (y == -1)*h)@tx
@@ -178,13 +173,13 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     if plot_loss:
         loss_info = []
         for step in steps:
-            loss_info += [compute_loss(y, step)]
+            loss_info += [compute_logistic_loss(y, tx, step)]
         
         plt.plot(loss_info)
         plt.xlabel('iteration')
         plt.ylabel('loss')
         plt.show()
-    return w, compute_loss(y, w)
+    return w, compute_logistic_loss(y, tx, w)
 
 
 def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, plot_loss = True):
@@ -212,12 +207,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, plot_lo
         Final weights.
     final_loss : float
         Final minimization loss.   
-    """
-    def compute_loss(y, w, lambda_ = 0):
-        h = sigmoid(tx, w.T)
-        loss = - 1/y.shape[0]*np.sum((y == 1)*np.log(h) + (y == -1)*np.log(1 - h))
-        return loss 
-    
+    """   
     def df(y, tx, w):
         h = sigmoid(tx, w)
         return  1/y.shape[0]*((y == 1)*(1 - h) - (y == -1)*h)@tx + 2*lambda_*w
@@ -227,10 +217,10 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, plot_lo
     if plot_loss:
         loss_info = []
         for step in steps:
-            loss_info += [compute_loss(y, step)]
+            loss_info += [compute_logistic_loss(y, tx, step)]
         
         plt.plot(loss_info)
         plt.xlabel('iteration')
         plt.ylabel('loss')
         plt.show()
-    return w, compute_loss(y, w)
+    return w, compute_logistic_loss(y, tx, w)
