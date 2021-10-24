@@ -75,7 +75,9 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma, plot_loss = False):
 
     def df(y, tx, w):
         idx = random.choice(range(w.shape[0]))
-        return (-1/y.shape[0])*np.dot(tx.T[idx], y - np.dot(tx, w))
+        grad_dgd = np.zeros(w.shape[0])
+        grad_dgd[idx] = (-1/y.shape[0])*np.dot(tx.T[idx], y - np.dot(tx, w))
+        return grad_dgd
         
     w, steps = gradient_descent(df, y, tx, initial_w, gamma, max_iters, return_all_steps = True)
     
