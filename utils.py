@@ -107,6 +107,28 @@ def compute_mse(y, tx, w):
     mse = e.dot(e) / (2 * len(e))
     return mse
 
+def compute_logistic_loss(y, tx, w):
+    """
+    Computation logistic regression loss.
+    
+    Parameters
+    ----------
+    y : ndarray
+        Target values belonging to the set {-1, 1}.
+    tx : ndarray
+        Matrix of features.
+    w : ndarray
+        Model weights.
+        
+    Returns
+    -------
+    loss : float
+        Logistic regression loss.
+    """
+    h = sigmoid(tx, w.T)
+    loss = - 1/y.shape[0]*np.sum((y == 1)*np.log(h) + (y == -1)*np.log(1 - h))
+    return loss
+
 def compute_gradient(y, tx, w):
     """
     Compute the gradient for least squares.
