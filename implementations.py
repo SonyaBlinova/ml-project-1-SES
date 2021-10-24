@@ -187,7 +187,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     return w, compute_loss(y, w)
 
 
-def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, plot_loss = True):
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, plot_loss = False):
     """
     Minimization using logistic regression with regularization.
     
