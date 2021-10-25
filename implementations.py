@@ -168,7 +168,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     """
     def df(y, tx, w):
         h = sigmoid(tx, w)
-        return  1/y.shape[0]*((y == 1)*(1 - h) - (y == -1)*h)@tx
+        return  -1/y.shape[0]*((y == 1)*(1 - h) - (y == -1)*h)@tx
         
     w, steps = gradient_descent(df, y, tx, initial_w, gamma, max_iters, return_all_steps = True)
     

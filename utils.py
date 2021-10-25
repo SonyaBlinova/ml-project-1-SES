@@ -234,7 +234,7 @@ def sigmoid(tx, w):
         Value of the sigmoid function.
     """
     
-    return 1/(1 + np.exp(tx@w.T))
+    return 1/(1 + np.exp(-tx@w.T))
 
 def split_data(x, y, ratio, seed=1):
     """
