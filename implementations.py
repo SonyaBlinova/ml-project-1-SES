@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import random
 from utils import *
 
 def least_squares_GD(y, tx, initial_w, max_iters, gamma, plot_loss = False):
@@ -73,9 +74,10 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     """
 
     def df(y, tx, w):
-        batch_size = 1
-        y_batch, tx_batch = next(batch_iter(y, tx, batch_size=batch_size, num_batches=1, shuffle=True))
-        return (-1/y_batch.shape[0])*np.dot(tx_batch.T, y_batch - np.dot(tx_batch, w))
+        idx = random.choice(range(w.shape[0]))
+        grad_dgd = np.zeros(w.shape[0])
+        grad_dgd[idx] = (-1/y.shape[0])*np.dot(tx.T[idx], y - np.dot(tx, w))
+        return grad_dgd
         
     w, steps = gradient_descent(df, y, tx, initial_w, gamma, max_iters, return_all_steps = True)
     
@@ -182,7 +184,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     return w, compute_logistic_loss(y, tx, w)
 
 
-def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, plot_loss = True):
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, plot_loss = False):
     """
     Minimization using logistic regression with regularization.
     
