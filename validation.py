@@ -51,7 +51,7 @@ def cross_validation(type_, y, x, k_indices, k, lambda_ = None, gamma = None, in
     return accuracy_
 
 def cross_validation_demo(type_, y, tx, bd_left, bd_right, seed, gammas=None, max_iters=None, lambdas=None, degrees=None):
-    k_fold = 4
+    k_fold = 2
 #     initial_w = np.zeros((tx.shape[1]))
     initial_w = np.random.rand((tx.shape[1]))
     # split data in k fold
@@ -95,16 +95,16 @@ def cross_validation_demo(type_, y, tx, bd_left, bd_right, seed, gammas=None, ma
             acc.append(np.mean(acc_batch))
         global_acc.append(acc)
 
-    print("Accuracy is {:.4f}".format(np.min(global_acc)))
+    print("Accuracy is {:.4f}".format(np.max(global_acc)))
     
     #plotting results
     fig, ax = plt.subplots(figsize=(12, 8))
     for i in range(len(params_1)):
         label = label_ + str(params_1[i])
         if xlabel == 'gamma':
-            plt.plot(params_2, global_acc[i], marker=".", label=label)
-#             plt.semilogx(params_2, global_mse_te[i], marker=".", label=label)
-#             plt.xlim(10**bd_left, 10**bd_right)
+#             plt.plot(params_2, global_acc[i], marker=".", label=label)
+            plt.semilogx(params_2, global_acc[i], marker=".", label=label)
+            plt.xlim(10**bd_left, 10**bd_right)
         else:
             plt.semilogx(params_2, global_acc[i], marker=".", label=label)
             plt.xlim(10**bd_left, 10**bd_right)
