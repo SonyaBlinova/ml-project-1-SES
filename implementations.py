@@ -213,11 +213,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, plot_lo
     """   
     def df(y, tx, w):
         h = sigmoid(tx, w)
-<<<<<<< HEAD
         return  -1/y.shape[0]*tx.T@((y == 1)*(1 - h) - (y == -1)*h) + 2*lambda_*w
-=======
-        return  -1/y.shape[0]*tx.T@((y == 1)*(1 - h) - (y == -1)*h) + 2*lambda_*w
->>>>>>> main
         
     w, steps = gradient_descent(df, y, tx, initial_w, gamma, max_iters, return_all_steps = True)
     
