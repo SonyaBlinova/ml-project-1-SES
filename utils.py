@@ -1,6 +1,29 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+def predict_labels_for_log(weights, data):
+    """Generates class predictions for LOgistic regression
+    
+    Parameters
+    ----------
+    weights : ndarray
+        Final weights.
+    data : ndarray
+        Matrix of features.
+        
+    Returns
+    -------
+    y : ndarray
+        Target values belonging to the set {-1, 1}.
+    
+    """
+    y_pred = sigmoid(data, weights)
+    y_pred[np.where(y_pred > 0.5)] = 1
+    y_pred[np.where(y_pred <= 0.5)] = -1
+
+    return y_pred
+
+
 def gradient_descent(df, y, tx, w_0, gamma, max_iter, return_all_steps = False):
     """
     Minimization using gradient descent algorithm.
@@ -129,28 +152,6 @@ def compute_logistic_loss(y, tx, w):
     loss = - 1/y.shape[0]*np.sum((y == 1)*np.log(h) + (y == -1)*np.log(1 - h))
     return loss
 
-def compute_gradient(y, tx, w):
-    """
-    Compute the gradient for least squares.
-    
-    Parameters
-    ----------
-    y : ndarray
-        Target values belonging to the set {-1, 1}.
-    tx : ndarray
-        Matrix of features.
-    w : ndarray
-        Model weights.
-        
-    Returns
-    -------
-    gradient : ndarray
-        Gradient for least squares.
-    loss : float
-        MSE loss.
-    """
-    
-    return (-1/y.shape[0])*np.dot(tx.T, y - np.dot(tx, w)), compute_mse(y, tx, w)
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
     """
@@ -191,31 +192,6 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         if start_index != end_index:
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
 
-def compute_stoch_gradient(y, tx, w, batch_size):
-    """
-    Stochastic gradient from just few examples n and their corresponding y_n labels for least squares.
-    
-    Parameters
-    ----------
-    y : ndarray
-        Target values belonging to the set {-1, 1}.
-    tx : ndarray
-        Matrix of features.
-    w : ndarray
-        Model weights.
-    batch_size : int
-        Size of the batch.
-        
-    Returns
-    -------
-    gradient : ndarray
-        Stochastic gradient from just few examples n and their corresponding y_n labels.
-    loss : float
-        MSE loss.
-    """
-    
-    y_batch, tx_batch = next(batch_iter(y, tx, batch_size=batch_size, num_batches=1, shuffle=True))
-    return compute_gradient(y_batch, tx_batch, w)
 
 def sigmoid(tx, w):
     """
