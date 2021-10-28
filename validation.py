@@ -80,7 +80,7 @@ def cross_validation(type_, y, x, k_indices, k, lambda_ = None, gamma = None, in
     return accuracy_
 
 def cross_validation_demo(type_, y, tx, bd_left, bd_right, seed, gammas=None, max_iters=None, lambdas=None, degrees=None):
-    k_fold = 2
+    k_fold = 3
     # split data in k fold
     k_indices = []
     for i in range(4):
