@@ -53,3 +53,23 @@ def normalization(jet_groups, jet_labels):
         jet_labels[i] = jet_label
         print(f'jet : {i+1}, shape y : {jet_label.shape}, shape x : {jet_group.shape}')
     return jet_groups, jet_labels, means, stds
+
+def preproccess_test(input_data, ids_test, del_columns, del_columns_cor):
+    jets = np.unique(input_data.T[22])
+    jet_groups = []
+    jet_idxs = []
+    data_labels = np.concatenate((input_data, ids_test.reshape(-1, 1)), axis=1)
+    for i in range(4):
+        jet_group_ = data_labels[data_labels[:, 22] == i]
+        jet_group, jet_idx = jet_group_[:, :input_data.shape[1]], jet_group_[:, -1]
+        for col in del_columns[str(i)][::-1]:
+            jet_group = np.delete(jet_group, col, 1)
+        for col in del_columns_cor[str(i)]:
+            jet_group = np.delete(jet_group, col, 1)
+        jet_group = (jet_group - means[i])/stds[i]
+        jet_group = np.concatenate((np.ones(jet_group.shape[0]).reshape(-1, 1), jet_group), axis=1)
+        
+        jet_groups.append(jet_group)
+        jet_idxs.append(jet_idx)
+    jet_idxs = np.array(np.concatenate(jet_idxs))
+    return jet_groups, jet_idxs
