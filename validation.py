@@ -91,18 +91,18 @@ def cross_validation_demo(type_, y, tx, bd_left, bd_right, seed, gammas=None, ma
     if type_ in ['GD', 'SGD', 'LR']:
         params_1 = max_iters
         params_2 = gammas
-        label_ = 'num_iters = '
-        xlabel = 'gamma'
+        label_ = 'max_iters = '
+        xlabel = 'Gamma'
     elif type_ in ['RR']:
         params_1 = degrees
         params_2 = lambdas
         label_ = 'degree = '
-        xlabel = 'lambda'
+        xlabel = 'Lambda'
     elif type_ in ['RLR']:
         params_1 = degrees
         params_2 = lambdas
         label_ = 'degree = '
-        xlabel = 'lambda'
+        xlabel = 'Lambda'
     else:
         raise NotImplementedError
         
@@ -130,16 +130,18 @@ def cross_validation_demo(type_, y, tx, bd_left, bd_right, seed, gammas=None, ma
     fig, ax = plt.subplots(figsize=(12, 8))
     for i in range(len(params_1)):
         label = label_ + str(params_1[i])
-        if xlabel == 'gamma' and type_ != 'LR':
+        if xlabel == 'Gamma' and type_ != 'LR':
             plt.plot(params_2, global_acc[i], marker=".", label=label)
 #             plt.semilogx(params_2, global_acc[i], marker=".", label=label)
 #             plt.xlim(10**bd_left, 10**bd_right)
         else:
             plt.semilogx(params_2, global_acc[i], marker=".", label=label)
             plt.xlim(10**bd_left, 10**bd_right)
-    plt.xlabel(xlabel, fontsize=15)
-    plt.ylabel("Accuracy", fontsize=15)
-    plt.title("Cross validation of the " + type_, fontsize=20)
+    plt.xlabel(xlabel, fontsize=17)
+    plt.ylabel("Accuracy", fontsize=17)
+    plt.title("Cross validation for the " + type_, fontsize=20)
     plt.legend(fontsize=15)
     plt.grid(True)
+    ax.tick_params(axis='both', which='major', labelsize=13)
+    plt.savefig('data/cross_validation'+type_+'.png')
     
