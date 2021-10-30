@@ -91,17 +91,17 @@ def cross_validation_demo(type_, y, tx, bd_left, bd_right, seed, gammas=None, ma
     if type_ in ['GD', 'SGD', 'LR']:
         params_1 = max_iters
         params_2 = gammas
-        label_ = 'test error, num_iters = '
+        label_ = 'num_iters = '
         xlabel = 'gamma'
     elif type_ in ['RR']:
         params_1 = degrees
         params_2 = lambdas
-        label_ = 'test error, degree = '
+        label_ = 'degree = '
         xlabel = 'lambda'
     elif type_ in ['RLR']:
         params_1 = degrees
         params_2 = lambdas
-        label_ = 'test error, degree = '
+        label_ = 'degree = '
         xlabel = 'lambda'
     else:
         raise NotImplementedError
