@@ -29,26 +29,26 @@ def cross_validation(type_, y, x, k_indices, k, lambda_ = None, gamma = None, in
         initial_w = np.random.rand((x_train_poly.shape[1]))
         w, loss = least_squares_GD(y_train, x_train_poly, initial_w, max_iters, gamma, plot_loss = False)
         y_pred = predict_labels(w, x_test_poly)
-        accuracy_  =  accuracy(y_pred, y_tests)        
+        accuracy_  =  accuracy(y_pred, y_test)        
     elif type_ == 'SGD':
         initial_w = np.random.rand((x_train_poly.shape[1]))
         w, loss = least_squares_SGD(y_train, x_train_poly, initial_w, max_iters, gamma, plot_loss = False)
         y_pred = predict_labels(w, x_test_poly)
-        accuracy_  =  accuracy(y_pred, y_tests)  
+        accuracy_  =  accuracy(y_pred, y_test)  
     elif type_ == 'RR':
         w, loss = ridge_regression(y_trains[i], x_train_poly, lambda_)
         y_pred = predict_labels(w, x_test_poly)
-        accuracy_  =  accuracy(y_pred, y_tests)  
+        accuracy_  =  accuracy(y_pred, y_test)  
     elif type_ == 'LR':
         initial_w = np.random.rand((x_train_poly.shape[1]))
         w, loss = logistic_regression(y_trains[i], x_train_poly, initial_w, max_iters, gamma, plot_loss = False)
         y_pred = predict_labels_for_log(w, x_test_poly)
-        accuracy_  =  accuracy(y_pred, y_tests)  
+        accuracy_  =  accuracy(y_pred, y_test)  
     elif type_ == 'RLR':
         initial_w = np.random.rand((x_train_poly.shape[1]))
         w, loss = reg_logistic_regression(y_trains[i], x_train_poly, lambda_, initial_w, max_iters, gamma, plot_loss = False)
         y_pred = predict_labels_for_log(w, x_test_poly)
-        accuracy_  =  accuracy(y_pred, y_tests)  
+        accuracy_  =  accuracy(y_pred, y_test)  
     else:
         raise TypeError(f"{type_} Wrong type!")
     return accuracy_
