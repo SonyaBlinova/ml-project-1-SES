@@ -9,11 +9,11 @@ from proj1_helpers import *
 def cross_validation(type_, y, x, k_indices, k, lambda_ = None, gamma = None, initial_w = None, max_iters = None, degree=0):
     """return the loss of ridge regression."""
     # get k'th subgroup in test, others in train
-    not_k_indices = set(np.arange(len(x_))) - set(k_indices[i][k])
-    x_train = x_[list(not_k_indices)]
-    y_train = y_[list(not_k_indices)]
-    x_test = x_[k_indices[i][k]]
-    y_test = y_[k_indices[i][k]]
+    not_k_indices = set(np.arange(len(x))) - set(k_indices[k])
+    x_train = x[list(not_k_indices)]
+    y_train = y[list(not_k_indices)]
+    x_test = x[k_indices[k]]
+    y_test = y[k_indices[k]]
 
     # form data with polynomial degree
     if degree == 0:
