@@ -7,23 +7,25 @@ def preproccess(input_data, labels):
     jet_groups = []
     jet_labels = []
     del_columns = {}
+    mean_of_all_col = [[], [], [], []]
     data_labels = np.concatenate((input_data, labels.reshape(-1, 1)), axis=1)
     for jet in jets:
         del_columns[str(int(jet))] = []
         jet_group_ = data_labels[data_labels[:, 22] == jet]
         jet_group, jet_label = jet_group_[:, :input_data.shape[1]], jet_group_[:, -1]
-        for i in range(len(jet_group[0])):
+        for i in range(jet_group.shape[1]):
             if len(np.unique(jet_group[:, i])) == 1:
                 del_columns[str(int(jet))].append(i)
             else:
                 jet_group[:, i][jet_group[:, i] == -999] = np.nan
                 jet_group[:, i] = np.where(np.isnan(jet_group[:, i]), np.nanmean(jet_group[:, i]), jet_group[:, i])
+                mean_of_all_col[int(jet)].append(np.nanmean(jet_group[:, i]))
         for col in del_columns[str(int(jet))][::-1]:
             jet_group = np.delete(jet_group, col, 1)
         
         jet_groups.append(jet_group)
         jet_labels.append(jet_label)
-    return jet_groups, jet_labels, del_columns
+    return jet_groups, jet_labels, del_columns, mean_of_all_col
 
 def correletions(jet_groups_cor):
     correlations = [[], [], [], []]
@@ -54,7 +56,7 @@ def normalization(jet_groups, jet_labels):
         print(f'jet : {i+1}, shape y : {jet_label.shape}, shape x : {jet_group.shape}')
     return jet_groups, jet_labels, means, stds
 
-def preproccess_test(input_data, ids_test, del_columns, del_columns_cor, means, stds):
+def preproccess_test(input_data, ids_test, del_columns, del_columns_cor, means, stds, mean_of_all_col):
     jets = np.unique(input_data.T[22])
     jet_groups = []
     jet_idxs = []
@@ -64,6 +66,9 @@ def preproccess_test(input_data, ids_test, del_columns, del_columns_cor, means, 
         jet_group, jet_idx = jet_group_[:, :input_data.shape[1]], jet_group_[:, -1]
         for col in del_columns[str(i)][::-1]:
             jet_group = np.delete(jet_group, col, 1)
+        for col in range(jet_group.shape[1]):
+            jet_group[:, col][jet_group[:, col] == -999] = np.nan
+            jet_group[:, col] = np.where(np.isnan(jet_group[:, col]), mean_of_all_col[i][col], jet_group[:, col])
         for col in del_columns_cor[str(i)]:
             jet_group = np.delete(jet_group, col, 1)
         
@@ -79,7 +84,6 @@ def preproccess_test(input_data, ids_test, del_columns, del_columns_cor, means, 
 def remove_outliers(jet_groups,jet_label):
     l1 = {0: set(), 1: set(), 2: set(), 3: set()}
     for i in range(4):
-        print("shape befor jet ", i+1, jet_groups[i].shape[0])
         for j in range(jet_groups[i].shape[1]):
             mean = np.mean((jet_groups[i])[:,j])
             standard_deviation = np.std((jet_groups[i])[:,j])
@@ -88,7 +92,5 @@ def remove_outliers(jet_groups,jet_label):
                 if(np.abs((jet_groups[i])[k,j] - mean) > max_deviations * standard_deviation ) :
                     l1[i].add(k) 
         jet_groups[i]  = np.delete(jet_groups[i], list(l1[i]), 0)
-        jet_label[i]  = np.delete(jet_label[i], list(l1[i]), 0)
-        print("shape after", jet_groups[i].shape[0])
-        
+        jet_label[i]  = np.delete(jet_label[i], list(l1[i]), 0)      
     return jet_groups, jet_label
