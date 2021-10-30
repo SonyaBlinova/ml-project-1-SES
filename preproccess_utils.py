@@ -58,7 +58,6 @@ def normalization(jet_groups, jet_labels):
 def remove_outliers(jet_groups,jet_label):
     outliers=[]
     l=[]
-    print("shape befor", jet_groups[0].shape[0])
     l1={0:set(),1:set(),2:set(),3:set()}
     for i in range(4):
         outlier=[]
@@ -70,18 +69,39 @@ def remove_outliers(jet_groups,jet_label):
             for k in range(jet_groups[i].shape[0]):
                 if( ((jet_groups[i])[k,j]-mean)> max_deviations * standard_deviation ) :
                     l1[i].add(k) 
-            
-                    
-      
-           # outlier = distance_from_mean > max_deviations * standard_deviation
-            #column = (jet_groups[i][:,j])[outlier]
-    
+
         jet_groups[i]  = np.delete(jet_groups[i],list(l1[i]),0)
         jet_label[i]  = np.delete(jet_label[i],list(l1[i]),0)
         
-        
-    print("shape after", jet_groups[0].shape[0])
     return jet_groups,jet_label
+
+def preproccess_test(input_data, ids_test, del_columns, del_columns_cor):
+    jets = np.unique(input_data.T[22])
+    jet_groups = []
+    jet_idxs = []
+    data_labels = np.concatenate((input_data, ids_test.reshape(-1, 1)), axis=1)
+    print("del_columns",del_columns)
+    print("del_columns_cor",del_columns_cor)
+    for i in range(4):
+        jet_group_ = data_labels[data_labels[:, 22] == i]
+        jet_group, jet_idx = jet_group_[:, :input_data.shape[1]], jet_group_[:, -1]
+        for col in del_columns[str(i)][::-1]:
+            jet_group = np.delete(jet_group, col, 1)
+        for col in del_columns_cor[str(i)]:
+            jet_group = np.delete(jet_group, col, 1)
+        jet_group = np.concatenate((np.ones(jet_group.shape[0]).reshape(-1, 1), jet_group), axis=1)
+        
+        jet_groups.append(jet_group)
+        jet_idxs.append(jet_idx)
+    jet_idxs = np.array(np.concatenate(jet_idxs))
+    
+    #normalization
+    for jet_group in jet_groups:
+        jet_group, mean_x, std_x = standardize(jet_group)
+        jet_groups[i] = jet_group
+
+    return jet_groups, jet_idxs
+
             
         
         
