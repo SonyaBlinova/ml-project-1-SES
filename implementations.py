@@ -166,12 +166,16 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma, plot_loss = False):
     final_loss : float
         Final minimization loss.
     """
+    
+    # we predict the probability
+    y_normal = y.copy()
+    y_normal[y_normal == -1] = 0
     def df(y, tx, w):
         h = sigmoid(tx, w)
-        return  -1/y.shape[0]*tx.T@((y == 1)*(1 - h) - (y == -1)*h)
+        return  1/y.shape[0]*(tx.T@(h - y))
     
         
-    w, steps = gradient_descent(df, y, tx, initial_w, gamma, max_iters, return_all_steps = True)
+    w, steps = gradient_descent(df, y_normal, tx, initial_w, gamma, max_iters, return_all_steps = True)
     
     if plot_loss:
         loss_info = []
@@ -211,11 +215,14 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, plot_lo
     final_loss : float
         Final minimization loss.   
     """   
+    y_normal = y.copy()
+    y_normal[y_normal == -1] = 0
+    
     def df(y, tx, w):
         h = sigmoid(tx, w)
-        return  -1/y.shape[0]*tx.T@((y == 1)*(1 - h) - (y == -1)*h) + 2*lambda_*w
+        return  1/y.shape[0]*(tx.T@(h - y)) + 2*lambda_*w
         
-    w, steps = gradient_descent(df, y, tx, initial_w, gamma, max_iters, return_all_steps = True)
+    w, steps = gradient_descent(df, y_normal, tx, initial_w, gamma, max_iters, return_all_steps = True)
     
     if plot_loss:
         loss_info = []

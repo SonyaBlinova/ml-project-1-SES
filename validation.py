@@ -4,89 +4,56 @@ from tqdm import tqdm
 from implementations import *
 from utils import *
 from plots import *
-from proj1_helpers import *
 
 def cross_validation(type_, y, x, k_indices, k, lambda_ = None, gamma = None, initial_w = None, max_iters = None, degree=0):
     """return the loss of ridge regression."""
-    x_trains = []
-    y_trains = []
-    x_tests = []
-    y_tests = []
-    
-    for i, (x_, y_) in enumerate(zip(x, y)):
-        # get k'th subgroup in test, others in train
-        not_k_indices = set(np.arange(len(x_))) - set(k_indices[i][k])
-        x_train = x_[list(not_k_indices)]
-        y_train = y_[list(not_k_indices)]
-        x_test = x_[k_indices[i][k]]
-        y_test = y_[k_indices[i][k]]
 
-        # form data with polynomial degree
-        if degree == 0:
-            x_train_poly = x_train
-            x_test_poly = x_test
-        else:
-            x_train_poly = build_poly(x_train, degree)
-            x_test_poly = build_poly(x_test, degree)
-            
-        x_trains.append(x_train_poly)
-        x_tests.append(x_test_poly)
-        y_trains.append(y_train)
-        y_tests.append(y_test)
+    # get k'th subgroup in test, others in train
+    not_k_indices = set(np.arange(len(x))) - set(k_indices[k])
+    x_train = x[list(not_k_indices)]
+    y_train = y[list(not_k_indices)]
+    x_test = x[k_indices[k]]
+    y_test = y[k_indices[k]]
+
+    # form data with polynomial degree
+    if degree == 0:
+        x_train_poly = x_train
+        x_test_poly = x_test
+    else:
+        x_train_poly = build_poly(x_train, degree)
+        x_test_poly = build_poly(x_test, degree)
 
 
     # calculate the loss for train and test data
     if type_ == 'GD':
-        y_preds = []
-        for i in range(4):
-            initial_w = np.random.rand((x_trains[i].shape[1]))
-            w, loss = least_squares_GD(y_trains[i], x_trains[i], initial_w, max_iters, gamma, plot_loss = False)
-            y_pred = predict_labels(w, x_tests[i])
-            y_preds.append(y_pred)
-        accuracy_  =  accuracy(np.array(np.concatenate(y_preds)), np.array(np.concatenate(y_tests)))        
+        w, loss_tr = least_squares_GD(y_train, x_train_poly, initial_w, max_iters, gamma, plot_loss = False)
+        loss_te = compute_mse(y_test, x_test_poly, w)
     elif type_ == 'SGD':
-        y_preds = []
-        for i in range(4):
-            initial_w = np.random.rand((x_trains[i].shape[1]))
-            w, loss = least_squares_SGD(y_trains[i], x_trains[i], initial_w, max_iters, gamma, plot_loss = False)
-            y_pred = predict_labels(w, x_tests[i])
-            y_preds.append(y_pred)
-        accuracy_  =  accuracy(np.array(np.concatenate(y_preds)), np.array(np.concatenate(y_tests)))  
+        w, loss_tr = least_squares_SGD(y_train, x_train_poly, initial_w, max_iters, gamma, plot_loss = False)
+        loss_te = compute_mse(y_test, x_test_poly, w)
     elif type_ == 'RR':
-        y_preds = []
-        for i in range(4):
-            w, loss = ridge_regression(y_trains[i], x_trains[i], lambda_)
-            y_pred = predict_labels(w, x_tests[i])
-            y_preds.append(y_pred)
-        accuracy_  =  accuracy(np.array(np.concatenate(y_preds)), np.array(np.concatenate(y_tests)))  
+        w, loss_tr = ridge_regression(y_train, x_train_poly, lambda_)
+        loss_te = compute_mse(y_test, x_test_poly, w)
     elif type_ == 'LR':
-        y_preds = []
-        for i in range(4):
-            initial_w = np.random.rand((x_trains[i].shape[1]))
-            w, loss = logistic_regression(y_trains[i], x_trains[i], initial_w, max_iters, gamma, plot_loss = False)
-            y_pred = predict_labels(w, x_tests[i])
-            y_preds.append(y_pred)
-        accuracy_  =  accuracy(np.array(np.concatenate(y_preds)), np.array(np.concatenate(y_tests)))  
+        w, loss_tr = logistic_regression(y_train, x_train_poly, initial_w, max_iters, gamma, plot_loss = False)
+        h = sigmoid(x_test_poly, w)        
+        loss_te = - 1/y_test.shape[0]*np.sum((y_test == 1)*np.log(h) + (y_test == -1)*np.log(1 - h))
     elif type_ == 'RLR':
-        y_preds = []
-        for i in range(4):
-            initial_w = np.random.rand((x_trains[i].shape[1]))
-            w, loss = reg_logistic_regression(y_trains[i], x_trains[i], lambda_, initial_w, max_iters, gamma, plot_loss = False)
-            y_pred = predict_labels(w, x_tests[i])
-            y_preds.append(y_pred)
-        accuracy_  =  accuracy(np.array(np.concatenate(y_preds)), np.array(np.concatenate(y_tests)))
+        w, loss_tr = reg_logistic_regression(y_train, x_train_poly, lambda_, initial_w, max_iters, gamma, plot_loss = False)
+        h = sigmoid(x_test_poly, w)        
+        loss_te = - 1/y_test.shape[0]*np.sum((y_test == 1)*np.log(h) + (y_test == -1)*np.log(1 - h))
     else:
         raise TypeError(f"{type_} Wrong type!")
-    return accuracy_
+    return loss_tr, loss_te
 
 def cross_validation_demo(type_, y, tx, bd_left, bd_right, seed, gammas=None, max_iters=None, lambdas=None, degrees=None):
-    k_fold = 3
+    k_fold = 4
+    initial_w = np.ones((tx.shape[1]))
     # split data in k fold
-    k_indices = []
-    for i in range(4):
-        k_indices.append(build_k_indices(y[i], k_fold, seed))
+    k_indices = build_k_indices(y, k_fold, seed)
     # define lists to store the loss of training data and test data
-    global_acc = []
+    global_mse_tr = []
+    global_mse_te = []
     
     if type_ in ['GD', 'SGD', 'LR']:
         params_1 = max_iters
@@ -108,38 +75,44 @@ def cross_validation_demo(type_, y, tx, bd_left, bd_right, seed, gammas=None, ma
         
     # cross validation
     for param_1 in tqdm(params_1):
-        acc = []
+        mse_tr = []
+        mse_te = []
         for param_2 in params_2:
-            acc_batch = []
+            loss_train = []
+            loss_test = []
             for k in range(k_fold):
                 if type_ in ['GD', 'SGD', 'LR']:
-                    acc_ = cross_validation(type_=type_, y=y, x=tx, k_indices=k_indices, k=k, gamma = param_2, max_iters = param_1)
+                    loss_tr, loss_te = cross_validation(type_=type_, y=y, x=tx, k_indices=k_indices, k=k, gamma = param_2, initial_w = initial_w, max_iters = param_1)
                 elif type_ in ['RR']:
-                    acc_ = cross_validation(type_=type_, y=y, x=tx, k_indices=k_indices, k=k, lambda_=param_2, degree=param_1)
+                    loss_tr, loss_te = cross_validation(type_=type_, y=y, x=tx, k_indices=k_indices, k=k, lambda_=param_2, degree=param_1)
                 elif type_ in ['RLR']:
-                    acc_ = cross_validation(type_=type_, y=y, x=tx, k_indices=k_indices, k=k, gamma = gammas, max_iters = max_iters, lambda_=param_2)
+                    loss_tr, loss_te = cross_validation(type_=type_, y=y, x=tx, k_indices=k_indices, k=k, gamma = gammas, initial_w = initial_w, max_iters = max_iters, lambda_=param_2)
                 else:
                     raise NotImplementedError
-                acc_batch.append(acc_)
-            acc.append(np.mean(acc_batch))
-        global_acc.append(acc)
+                loss_train.append(loss_tr)
+                loss_test.append(loss_te)
+            mse_tr.append(np.mean(loss_train))
+            mse_te.append(np.mean(loss_test))
+        global_mse_tr.append(mse_tr)
+        global_mse_te.append(mse_te)
 
-    print("Accuracy is {:.4f}".format(np.max(global_acc)))
+    print("Train loss is {:.4f}".format(np.min(global_mse_tr)))
+    print("Test loss is {:.4f}".format(np.min(global_mse_te)))
     
     #plotting results
     fig, ax = plt.subplots(figsize=(12, 8))
     for i in range(len(params_1)):
         label = label_ + str(params_1[i])
-        if xlabel == 'gamma' and type_ != 'LR':
-            plt.plot(params_2, global_acc[i], marker=".", label=label)
-#             plt.semilogx(params_2, global_acc[i], marker=".", label=label)
-#             plt.xlim(10**bd_left, 10**bd_right)
+        if xlabel == 'gamma':
+#             plt.plot(params_2, global_mse_te[i], marker=".", label=label)
+            plt.semilogx(params_2, global_mse_te[i], marker=".", label=label)
+            plt.xlim(10**bd_left, 10**bd_right)
         else:
-            plt.semilogx(params_2, global_acc[i], marker=".", label=label)
+            plt.semilogx(params_2, global_mse_te[i], marker=".", label=label)
             plt.xlim(10**bd_left, 10**bd_right)
     plt.xlabel(xlabel, fontsize=15)
-    plt.ylabel("Accuracy", fontsize=15)
-    plt.title("Cross validation of the " + type_, fontsize=20)
+    plt.ylabel("MSE", fontsize=15)
+    plt.title("Cross validation", fontsize=20)
     plt.legend(fontsize=15)
     plt.grid(True)
     

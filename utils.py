@@ -148,7 +148,7 @@ def compute_logistic_loss(y, tx, w):
     loss : float
         Logistic regression loss.
     """
-    h = sigmoid(tx, w.T)
+    h = sigmoid(tx, w)
     loss = - 1/y.shape[0]*np.sum((y == 1)*np.log(h) + (y == -1)*np.log(1 - h))
     return loss
 
@@ -210,7 +210,7 @@ def sigmoid(tx, w):
         Value of the sigmoid function.
     """
     
-    return 1/(1 + np.exp(-tx@w.T))
+    return 1/(1 + np.exp(-tx@w))
 
 def split_data(x, y, ratio, seed=1):
     """
