@@ -71,7 +71,7 @@ def preproccess_test(input_data, ids_test, del_columns, del_columns_cor, means, 
         for j in range(jet_group.shape[1]):
             max_deviations = 5
             for k in range(jet_group.shape[0]):
-                if(np.abs(jet_group[k,j] - means_for_outliers[i]) > max_deviations * stds_for_outliers[i] ):
+                if(np.abs(jet_group[k,j] - means_for_outliers[i][j]) > max_deviations * stds_for_outliers[i][j]):
                     l1[i].add(k) 
         jet_group  = np.delete(jet_group, list(l1[i]), 0)
         jet_idx  = np.delete(jet_idx, list(l1[i]), 0)
@@ -90,6 +90,8 @@ def remove_outliers(jet_groups,jet_label):
     means = []
     stds = []
     for i in range(4):
+        mean_ = []
+        std_ = []
         print("shape befor jet ", i+1, jet_groups[i].shape[0])
         for j in range(jet_groups[i].shape[1]):
             mean = np.mean((jet_groups[i])[:,j])
@@ -98,8 +100,10 @@ def remove_outliers(jet_groups,jet_label):
             for k in range(jet_groups[i].shape[0]):
                 if(np.abs((jet_groups[i])[k,j] - mean) > max_deviations * standard_deviation ) :
                     l1[i].add(k) 
-            means.append(mean)
-            stds.append(standard_deviation)
+            mean_.append(mean)
+            std_.append(standard_deviation)
+        means.append(mean_)
+        stds.append(std_)
         jet_groups[i]  = np.delete(jet_groups[i], list(l1[i]), 0)
         jet_label[i]  = np.delete(jet_label[i], list(l1[i]), 0)
         print("shape after", jet_groups[i].shape[0])

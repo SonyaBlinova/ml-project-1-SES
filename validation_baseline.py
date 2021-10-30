@@ -8,73 +8,47 @@ from proj1_helpers import *
 
 def cross_validation(type_, y, x, k_indices, k, lambda_ = None, gamma = None, initial_w = None, max_iters = None, degree=0):
     """return the loss of ridge regression."""
-    x_trains = []
-    y_trains = []
-    x_tests = []
-    y_tests = []
-    
-    for i, (x_, y_) in enumerate(zip(x, y)):
-        # get k'th subgroup in test, others in train
-        not_k_indices = set(np.arange(len(x_))) - set(k_indices[i][k])
-        x_train = x_[list(not_k_indices)]
-        y_train = y_[list(not_k_indices)]
-        x_test = x_[k_indices[i][k]]
-        y_test = y_[k_indices[i][k]]
+    # get k'th subgroup in test, others in train
+    not_k_indices = set(np.arange(len(x_))) - set(k_indices[i][k])
+    x_train = x_[list(not_k_indices)]
+    y_train = y_[list(not_k_indices)]
+    x_test = x_[k_indices[i][k]]
+    y_test = y_[k_indices[i][k]]
 
-        # form data with polynomial degree
-        if degree == 0:
-            x_train_poly = x_train
-            x_test_poly = x_test
-        else:
-            x_train_poly = build_poly(x_train, degree)
-            x_test_poly = build_poly(x_test, degree)
-            
-        x_trains.append(x_train_poly)
-        x_tests.append(x_test_poly)
-        y_trains.append(y_train)
-        y_tests.append(y_test)
+    # form data with polynomial degree
+    if degree == 0:
+        x_train_poly = x_train
+        x_test_poly = x_test
+    else:
+        x_train_poly = build_poly(x_train, degree)
+        x_test_poly = build_poly(x_test, degree)
 
 
     # calculate the loss for train and test data
     if type_ == 'GD':
-        y_preds = []
-        for i in range(4):
-            initial_w = np.random.rand((x_trains[i].shape[1]))
-            w, loss = least_squares_GD(y_trains[i], x_trains[i], initial_w, max_iters, gamma, plot_loss = False)
-            y_pred = predict_labels(w, x_tests[i])
-            y_preds.append(y_pred)
-        accuracy_  =  accuracy(np.array(np.concatenate(y_preds)), np.array(np.concatenate(y_tests)))        
+        initial_w = np.random.rand((x_train_poly.shape[1]))
+        w, loss = least_squares_GD(y_train, x_train_poly, initial_w, max_iters, gamma, plot_loss = False)
+        y_pred = predict_labels(w, x_test_poly)
+        accuracy_  =  accuracy(y_pred, y_tests)        
     elif type_ == 'SGD':
-        y_preds = []
-        for i in range(4):
-            initial_w = np.random.rand((x_trains[i].shape[1]))
-            w, loss = least_squares_SGD(y_trains[i], x_trains[i], initial_w, max_iters, gamma, plot_loss = False)
-            y_pred = predict_labels(w, x_tests[i])
-            y_preds.append(y_pred)
-        accuracy_  =  accuracy(np.array(np.concatenate(y_preds)), np.array(np.concatenate(y_tests)))  
+        initial_w = np.random.rand((x_train_poly.shape[1]))
+        w, loss = least_squares_SGD(y_train, x_train_poly, initial_w, max_iters, gamma, plot_loss = False)
+        y_pred = predict_labels(w, x_test_poly)
+        accuracy_  =  accuracy(y_pred, y_tests)  
     elif type_ == 'RR':
-        y_preds = []
-        for i in range(4):
-            w, loss = ridge_regression(y_trains[i], x_trains[i], lambda_)
-            y_pred = predict_labels(w, x_tests[i])
-            y_preds.append(y_pred)
-        accuracy_  =  accuracy(np.array(np.concatenate(y_preds)), np.array(np.concatenate(y_tests)))  
+        w, loss = ridge_regression(y_trains[i], x_train_poly, lambda_)
+        y_pred = predict_labels(w, x_test_poly)
+        accuracy_  =  accuracy(y_pred, y_tests)  
     elif type_ == 'LR':
-        y_preds = []
-        for i in range(4):
-            initial_w = np.random.rand((x_trains[i].shape[1]))
-            w, loss = logistic_regression(y_trains[i], x_trains[i], initial_w, max_iters, gamma, plot_loss = False)
-            y_pred = predict_labels_for_log(w, x_tests[i])
-            y_preds.append(y_pred)
-        accuracy_  =  accuracy(np.array(np.concatenate(y_preds)), np.array(np.concatenate(y_tests)))  
+        initial_w = np.random.rand((x_train_poly.shape[1]))
+        w, loss = logistic_regression(y_trains[i], x_train_poly, initial_w, max_iters, gamma, plot_loss = False)
+        y_pred = predict_labels_for_log(w, x_test_poly)
+        accuracy_  =  accuracy(y_pred, y_tests)  
     elif type_ == 'RLR':
-        y_preds = []
-        for i in range(4):
-            initial_w = np.random.rand((x_trains[i].shape[1]))
-            w, loss = reg_logistic_regression(y_trains[i], x_trains[i], lambda_, initial_w, max_iters, gamma, plot_loss = False)
-            y_pred = predict_labels_for_log(w, x_tests[i])
-            y_preds.append(y_pred)
-        accuracy_  =  accuracy(np.array(np.concatenate(y_preds)), np.array(np.concatenate(y_tests)))
+        initial_w = np.random.rand((x_train_poly.shape[1]))
+        w, loss = reg_logistic_regression(y_trains[i], x_train_poly, lambda_, initial_w, max_iters, gamma, plot_loss = False)
+        y_pred = predict_labels_for_log(w, x_test_poly)
+        accuracy_  =  accuracy(y_pred, y_tests)  
     else:
         raise TypeError(f"{type_} Wrong type!")
     return accuracy_
@@ -82,9 +56,7 @@ def cross_validation(type_, y, x, k_indices, k, lambda_ = None, gamma = None, in
 def cross_validation_demo(type_, y, tx, bd_left, bd_right, seed, gammas=None, max_iters=None, lambdas=None, degrees=None):
     k_fold = 3
     # split data in k fold
-    k_indices = []
-    for i in range(4):
-        k_indices.append(build_k_indices(y[i], k_fold, seed))
+    k_indices = build_k_indices(y, k_fold, seed)
     # define lists to store the loss of training data and test data
     global_acc = []
     
@@ -142,4 +114,3 @@ def cross_validation_demo(type_, y, tx, bd_left, bd_right, seed, gammas=None, ma
     plt.title("Cross validation of the " + type_, fontsize=20)
     plt.legend(fontsize=15)
     plt.grid(True)
-    
