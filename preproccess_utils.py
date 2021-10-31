@@ -91,6 +91,7 @@ def remove_outliers(jet_groups,jet_label):
             for k in range(jet_groups[i].shape[0]):
                 if(np.abs((jet_groups[i])[k,j] - mean) > max_deviations * standard_deviation ) :
                     l1[i].add(k) 
+
         jet_groups[i]  = np.delete(jet_groups[i], list(l1[i]), 0)
         jet_label[i]  = np.delete(jet_label[i], list(l1[i]), 0)      
     return jet_groups, jet_label
