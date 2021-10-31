@@ -25,6 +25,7 @@ def preproccess(input_data, labels):
         
         jet_groups.append(jet_group)
         jet_labels.append(jet_label)
+    print("these are the deleted columns: ",del_columns) 
     return jet_groups, jet_labels, del_columns, mean_of_all_col
 
 def correletions(jet_groups_cor):
@@ -41,6 +42,7 @@ def correletions(jet_groups_cor):
         for col in correlations[jet][::-1]:
             del_columns_cor[str(int(jet))].append(col)
             jet_groups_cor[jet] = np.delete(jet_groups_cor[jet], col, 1)
+    print("these are the deleted columns: ",del_columns_cor) 
     return jet_groups_cor, del_columns_cor
 
 def normalization(jet_groups, jet_labels):

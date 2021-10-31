@@ -267,6 +267,14 @@ def accuracy(y_pred, y_test):
     diff = y_test - y_pred
     return len(diff[diff==0])/len(diff)
 
+def F1_score(y_pred, y_test):
+    TP=np.sum((y_test==1) & (y_pred==1))
+    FP=np.sum((y_test==1) & (y_pred==-1))
+    Precision=TP/(TP+FP)
+    FN=np.sum((y_test==-1) & (y_pred==1))
+    Recall=TP/(TP+FN)
+    return round(2*Precision*Recall/(Precision+Recall),3)
+
 def build_k_indices(y, k_fold, seed):
     """
     Buildong k indices for k-fold.
