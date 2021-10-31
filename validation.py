@@ -6,8 +6,43 @@ from utils import *
 from plots import *
 from proj1_helpers import *
 
-def cross_validation(type_, y, x, k_indices, k, lambda_ = None, gamma = None, initial_w = None, max_iters = None, degree=0):
-    """return the loss of ridge regression."""
+def cross_validation(type_, y, x, k_indices, k, lambda_ = None, gamma = None, max_iters = None, degree=0):
+    """
+    Cross validation for fixed parameters for 1 fold.
+    Using for data with preprocess.
+    
+    Parameters:
+    -----------
+    type_ : str
+        The type of model that is being cross-validated.
+        type_ = {'GD', 'SGD', 'RR', 'LR', 'RLR'}.
+    y : list
+        List of 4 ndarrays of target values belonging to the set {-1, 1}.
+    x : list
+        List of 4 ndarrays of features.
+    k_indices : list
+        Contains k lists of test samples indices
+    k : int
+        Number of fold
+    lambda_ : float, optional
+        Regularization parameter.
+        Default lambda_ = None.
+    gamma : float, optoinal
+        Step size of the gradient decent.
+        Default gamma = None.
+    max_iters : int, optional
+        Maximum number of iteration.
+        Default max_iters = None.
+    degree : int, optional
+        Polynomial degree of the features.
+        If degree is equal to 0, polynomical transformation isn't applied to the features.
+        Default degree = 0.
+    
+    Returns:
+    --------
+    accuracy_ : float
+        Accuracy of the predicted labels.
+    """
     x_trains = []
     y_trains = []
     x_tests = []
@@ -35,7 +70,7 @@ def cross_validation(type_, y, x, k_indices, k, lambda_ = None, gamma = None, in
         y_tests.append(y_test)
 
 
-    # calculate the loss for train and test data
+    # calculate accuracy
     if type_ == 'GD':
         y_preds = []
         for i in range(4):
@@ -80,6 +115,44 @@ def cross_validation(type_, y, x, k_indices, k, lambda_ = None, gamma = None, in
     return accuracy_
 
 def cross_validation_demo(type_, y, tx, bd_left, bd_right, seed, gammas=None, max_iters=None, lambdas=None, degrees=None):
+    """
+    Cross validation.
+    Using for data with preprocess.
+    
+    Parameters:
+    -----------
+    type_ : str
+        The type of model that is being cross-validated.
+        type_ = {'GD', 'SGD', 'RR', 'LR', 'RLR'}.
+    y : list
+        List of 4 ndarrays of target values belonging to the set {-1, 1}.
+    tx : list
+        List of 4 ndarrays of features.
+    bd_left : int
+        Degree of 10. Left border of the parameter for cross validation.
+    bd_right : int
+        Degree of 10. Right border of the parameter for cross validation.
+    seed : int
+        The number used to initialize a pseudorandom number generator.
+    gammas : list, optoinal
+        List of step sizes of the gradient decent.
+        Default gamma = None.
+    max_iters : list, optional
+        List of maximum numbers of iteration.
+        Default max_iters = None.
+    lambda_ : list, optional
+        List of regularization parameters.
+        Default lambda_ = None.
+    degree : list, optional
+        List of polynomial degrees of the features.
+        If degree is equal to 0, polynomical transformation isn't applied to the features.
+        Default degree = None.
+    
+    Returns:
+    --------
+    Plot describing the accuracy for different parameters
+    """
+    
     np.random.seed(seed)
     
     k_fold = 3
@@ -121,7 +194,7 @@ def cross_validation_demo(type_, y, tx, bd_left, bd_right, seed, gammas=None, ma
                 elif type_ in ['RLR']:
                     acc_ = cross_validation(type_=type_, y=y, x=tx, k_indices=k_indices, k=k, gamma = gammas, max_iters = max_iters, lambda_=param_2)
                 else:
-                    raise NotImplementedError
+                    raise TypeError(f"{type_} Wrong type!")
                 acc_batch.append(acc_)
             acc.append(np.mean(acc_batch))
         global_acc.append(acc)
@@ -129,13 +202,11 @@ def cross_validation_demo(type_, y, tx, bd_left, bd_right, seed, gammas=None, ma
     print("Accuracy is {:.4f}".format(np.max(global_acc)))
     
     #plotting results
-    fig, ax = plt.subplots(figsize=(12, 8))
+    fig, ax = plt.subplots(figsize=(9, 6))
     for i in range(len(params_1)):
         label = label_ + str(params_1[i])
         if xlabel == 'Gamma' and type_ != 'LR':
             plt.plot(params_2, global_acc[i], marker=".", label=label)
-#             plt.semilogx(params_2, global_acc[i], marker=".", label=label)
-#             plt.xlim(10**bd_left, 10**bd_right)
         else:
             plt.semilogx(params_2, global_acc[i], marker=".", label=label)
             plt.xlim(10**bd_left, 10**bd_right)
@@ -148,8 +219,43 @@ def cross_validation_demo(type_, y, tx, bd_left, bd_right, seed, gammas=None, ma
     plt.savefig('data/cross_validation'+type_+'.png')
     
     
-def cross_validation_baseline(type_, y, x, k_indices, k, lambda_ = None, gamma = None, initial_w = None, max_iters = None, degree=0):
-    """return the loss of ridge regression."""
+def cross_validation_baseline(type_, y, x, k_indices, k, lambda_ = None, gamma = None, max_iters = None, degree=0):
+    """
+    Cross validation for fixed parameters for 1 fold.
+    Using for data without preprocess.
+    
+    Parameters:
+    -----------
+    type_ : str
+        The type of model that is being cross-validated.
+        type_ = {'GD', 'SGD', 'RR', 'LR', 'RLR'}.
+    y : ndarray
+        Target values belonging to the set {-1, 1}.
+    x : ndarray
+        Matrix of features.
+    k_indices : list
+        Contains k lists of test samples indices
+    k : int
+        Number of fold
+    lambda_ : float, optional
+        Regularization parameter.
+        Default lambda_ = None.
+    gamma : float, optoinal
+        Step size of the gradient decent.
+        Default gamma = None.
+    max_iters : int, optional
+        Maximum number of iteration.
+        Default max_iters = None.
+    degree : int, optional
+        Polynomial degree of the features.
+        If degree is equal to 0, polynomical transformation isn't applied to the features.
+        Default degree = 0.
+    
+    Returns:
+    --------
+    accuracy_ : float
+        Accuracy of the predicted labels.
+    """
     # get k'th subgroup in test, others in train
     not_k_indices = set(np.arange(len(x))) - set(k_indices[k])
     x_train = x[list(not_k_indices)]
@@ -166,7 +272,7 @@ def cross_validation_baseline(type_, y, x, k_indices, k, lambda_ = None, gamma =
         x_test_poly = build_poly(x_test, degree)
 
 
-    # calculate the loss for train and test data
+    # calculate accuracy
     if type_ == 'GD':
         initial_w = np.random.rand((x_train_poly.shape[1]))
         w, loss = least_squares_GD(y_train, x_train_poly, initial_w, max_iters, gamma, plot_loss = False)
@@ -196,6 +302,43 @@ def cross_validation_baseline(type_, y, x, k_indices, k, lambda_ = None, gamma =
     return accuracy_
 
 def cross_validation_demo_baseline(type_, y, tx, bd_left, bd_right, seed, gammas=None, max_iters=None, lambdas=None, degrees=None):
+    """
+    Cross validation.
+    Using for data without preprocess.
+    
+    Parameters:
+    -----------
+    type_ : str
+        The type of model that is being cross-validated.
+        type_ = {'GD', 'SGD', 'RR', 'LR', 'RLR'}.
+    y : ndarray
+        Target values belonging to the set {-1, 1}.
+    tx : ndarray
+        Matrix of features.
+    bd_left : int
+        Degree of 10. Left border of the parameter for cross validation.
+    bd_right : int
+        Degree of 10. Right border of the parameter for cross validation.
+    seed : int
+        The number used to initialize a pseudorandom number generator.
+    gammas : list, optoinal
+        List of step sizes of the gradient decent.
+        Default gamma = None.
+    max_iters : list, optional
+        List of maximum numbers of iteration.
+        Default max_iters = None.
+    lambda_ : list, optional
+        List of regularization parameters.
+        Default lambda_ = None.
+    degree : list, optional
+        List of polynomial degrees of the features.
+        If degree is equal to 0, polynomical transformation isn't applied to the features.
+        Default degree = None.
+    
+    Returns:
+    --------
+    Plot describing the accuracy for different parameters
+    """
     np.random.seed(seed)
     
     k_fold = 3
@@ -207,17 +350,17 @@ def cross_validation_demo_baseline(type_, y, tx, bd_left, bd_right, seed, gammas
     if type_ in ['GD', 'SGD', 'LR']:
         params_1 = max_iters
         params_2 = gammas
-        label_ = 'test error, num_iters = '
+        label_ = 'max_iters = '
         xlabel = 'gamma'
     elif type_ in ['RR']:
         params_1 = degrees
         params_2 = lambdas
-        label_ = 'test error, degree = '
+        label_ = 'degree = '
         xlabel = 'lambda'
     elif type_ in ['RLR']:
         params_1 = degrees
         params_2 = lambdas
-        label_ = 'test error, degree = '
+        label_ = 'degree = '
         xlabel = 'lambda'
     else:
         raise NotImplementedError
@@ -235,7 +378,7 @@ def cross_validation_demo_baseline(type_, y, tx, bd_left, bd_right, seed, gammas
                 elif type_ in ['RLR']:
                     acc_ = cross_validation_baseline(type_=type_, y=y, x=tx, k_indices=k_indices, k=k, gamma = gammas, max_iters = max_iters, lambda_=param_2)
                 else:
-                    raise NotImplementedError
+                    raise TypeError(f"{type_} Wrong type!")
                 acc_batch.append(acc_)
             acc.append(np.mean(acc_batch))
         global_acc.append(acc)
@@ -243,13 +386,11 @@ def cross_validation_demo_baseline(type_, y, tx, bd_left, bd_right, seed, gammas
     print("Accuracy is {:.4f}".format(np.max(global_acc)))
     
     #plotting results
-    fig, ax = plt.subplots(figsize=(12, 8))
+    fig, ax = plt.subplots(figsize=(9, 6))
     for i in range(len(params_1)):
         label = label_ + str(params_1[i])
         if xlabel == 'gamma' and type_ != 'LR':
             plt.plot(params_2, global_acc[i], marker=".", label=label)
-#             plt.semilogx(params_2, global_acc[i], marker=".", label=label)
-#             plt.xlim(10**bd_left, 10**bd_right)
         else:
             plt.semilogx(params_2, global_acc[i], marker=".", label=label)
             plt.xlim(10**bd_left, 10**bd_right)

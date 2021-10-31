@@ -2,7 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def predict_labels_for_log(weights, data):
-    """Generates class predictions for LOgistic regression
+    """
+    Generates class predictions for LOgistic regression
     
     Parameters
     ----------
@@ -268,6 +269,21 @@ def accuracy(y_pred, y_test):
     return len(diff[diff==0])/len(diff)
 
 def F1_score(y_pred, y_test):
+    """
+    Compute f1-score
+    
+    Parameters
+    ----------
+    y_pred : ndarray
+        Predicted labels.
+    y_test : ndarray
+        Target labels.
+        
+    Returns
+    -------
+    f1_score : float
+        2*Precision*Recall/(Precision+Recall).
+    """
     TP=np.sum((y_test==1) & (y_pred==1))
     FP=np.sum((y_test==1) & (y_pred==-1))
     Precision=TP/(TP+FP)
@@ -323,22 +339,4 @@ def build_poly(x, degree):
     for x_i in x:
         matr.append([x_i**j for j in range(degree+1)])
     return np.reshape(matr, (x.shape[0], x.shape[1]*(degree+1)))
-
-def plot_train_test(train_errors, test_errors, lambdas, degree):
-    """
-    train_errors, test_errors and lambas should be list (of the same size) the respective train error and test error for a given lambda,
-    * lambda[0] = 1
-    * train_errors[0] = RMSE of a ridge regression on the train set
-    * test_errors[0] = RMSE of the parameter found by ridge regression applied on the test set
-    
-    degree is just used for the title of the plot.
-    """
-    plt.semilogx(lambdas, train_errors, color='b', marker='*', label="Train error")
-    plt.semilogx(lambdas, test_errors, color='r', marker='*', label="Test error")
-    plt.xlabel("lambda")
-    plt.ylabel("MSE")
-    plt.title("Ridge regression for polynomial degree " + str(degree))
-    leg = plt.legend(loc=1, shadow=True)
-    leg.draw_frame(False)
-    plt.savefig("ridge_regression")
 

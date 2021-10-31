@@ -3,6 +3,27 @@ from utils import *
 
 
 def preproccess(input_data, labels):
+    """
+    Split dataset into 4 sets, deleting non-informative columns and replacing -999 with mean values.
+    
+    Parameters:
+    -----------
+    input_data : ndarray
+        Matrix of features.
+    labels : ndarray
+        Target values belonging to the set {-1, 1}.
+    
+    Returns:
+    --------
+    jet_groups : list
+        List of matrices of features after preprocess.
+    jet_labels : list
+        List of corresponding labels for each group of features.
+    del_columns : dict
+        Columns that should be deleted in the test.
+    mean_of_all_col : list
+        Mean values for each column for each group.
+    """
     jets = np.unique(input_data.T[22])
     jet_groups = []
     jet_labels = []
@@ -29,6 +50,21 @@ def preproccess(input_data, labels):
     return jet_groups, jet_labels, del_columns, mean_of_all_col
 
 def correletions(jet_groups_cor):
+    """
+    Find correlated columns and delete them.
+    
+    Parameters:
+    -----------
+    jet_groups_cor : list
+        List of matrices of features for each group.
+        
+    Returns:
+    --------
+    jet_groups_cor : list
+        List of matrices of features for each group without correlated columns.
+    del_columns_cor : list
+        Columns that should be deleted in the test for each group.
+    """
     correlations = [[], [], [], []]
     del_columns_cor = {}
     for jet in range(4):
@@ -46,6 +82,27 @@ def correletions(jet_groups_cor):
     return jet_groups_cor, del_columns_cor
 
 def normalization(jet_groups, jet_labels):
+    """
+    Data normalization.
+    
+    Parameters:
+    -----------
+    jet_groups : list
+        List of matrices of features for each group.
+    jet_labels : list
+        List of corresponding labels for each group of features.
+        
+    Returns:
+    --------
+    jet_groups : list
+        List of matrices of features for each group after normalization.
+    jet_labels : list
+        List of corresponding labels for each group of features.
+    means : list
+        List of means for each group for test normalization.
+    stds : list
+        List of stds for each group for test normalization.
+    """
     means = []
     stds = []
     for i, (jet_group, jet_label) in enumerate(zip(jet_groups, jet_labels)):
@@ -58,7 +115,66 @@ def normalization(jet_groups, jet_labels):
         print(f'jet : {i+1}, shape y : {jet_label.shape}, shape x : {jet_group.shape}')
     return jet_groups, jet_labels, means, stds
 
+def remove_outliers(jet_groups,jet_label):
+    """
+    Removing outliers.
+    
+    Parameters:
+    -----------
+    jet_groups : list
+        List of matrices of features for each group.
+    jet_labels : list
+        List of corresponding labels for each group of features.
+        
+    Returns:
+    --------
+    jet_groups : list
+        List of matrices of features for each group without outliers.
+    jet_labels : list
+        List of corresponding labels for each group of features without outliers.
+    """
+    l1 = {0: set(), 1: set(), 2: set(), 3: set()}
+    for i in range(4):
+        for j in range(jet_groups[i].shape[1]):
+            mean = np.mean((jet_groups[i])[:,j])
+            standard_deviation = np.std((jet_groups[i])[:,j])
+            max_deviations = 5
+            for k in range(jet_groups[i].shape[0]):
+                if(np.abs((jet_groups[i])[k,j] - mean) > max_deviations * standard_deviation ) :
+                    l1[i].add(k) 
+
+        jet_groups[i]  = np.delete(jet_groups[i], list(l1[i]), 0)
+        jet_label[i]  = np.delete(jet_label[i], list(l1[i]), 0)      
+    return jet_groups, jet_label
+
 def preproccess_test(input_data, ids_test, del_columns, del_columns_cor, means, stds, mean_of_all_col):
+    """
+    Preprocess test data.
+    
+    Parameters:
+    -----------
+    input_data : ndarray
+        Matrix of features.
+    ids_test : ndarray
+        Indeces for the test data.
+    del_columns : list
+        List of columns should be remove after splitting test features into 4 groups.
+    del_columns_cor : list
+        List of columns should be removed in the test features.
+    means : list
+        List of the means for normalization.
+    stds : list
+        List of the stds for normalization.
+    mean_of_all_col : list
+        List of means for each column for each group. Used for -999 removal.
+        
+    Returns:
+    --------
+    jet_groups : list
+        List of matrices of features for each group after preprocess.
+    jet_idxs : list
+        List of corresponding indeces for each group of features after preprocess.
+    """
     jets = np.unique(input_data.T[22])
     jet_groups = []
     jet_idxs = []
@@ -81,19 +197,3 @@ def preproccess_test(input_data, ids_test, del_columns, del_columns_cor, means, 
         jet_idxs.append(jet_idx)
     jet_idxs = np.array(np.concatenate(jet_idxs))
     return jet_groups, jet_idxs
-
-#remove outliers  : 
-def remove_outliers(jet_groups,jet_label):
-    l1 = {0: set(), 1: set(), 2: set(), 3: set()}
-    for i in range(4):
-        for j in range(jet_groups[i].shape[1]):
-            mean = np.mean((jet_groups[i])[:,j])
-            standard_deviation = np.std((jet_groups[i])[:,j])
-            max_deviations = 5
-            for k in range(jet_groups[i].shape[0]):
-                if(np.abs((jet_groups[i])[k,j] - mean) > max_deviations * standard_deviation ) :
-                    l1[i].add(k) 
-
-        jet_groups[i]  = np.delete(jet_groups[i], list(l1[i]), 0)
-        jet_label[i]  = np.delete(jet_label[i], list(l1[i]), 0)      
-    return jet_groups, jet_label
