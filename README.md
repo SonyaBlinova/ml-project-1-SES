@@ -7,7 +7,7 @@ Saad Charkaoui (saad.charkaoui@epfl.ch)
 Sofia Blinova (sofia.blinova@epfl.ch)
 
 ## Getting Started
-Before you run our scripts, make sure that you place '''train.csv''' and '''submission.csv''' into ../data. 
+Before you run our scripts, make sure that you place ```train.csv``` and ```submission.csv``` into ../data. 
 
 Matplotlib, Numpy and Seaborn(for vizualisation) are required.
 
