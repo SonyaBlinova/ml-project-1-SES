@@ -6,18 +6,19 @@ Saad Charkaoui (saad.charkaoui@epfl.ch)
 
 Sofia Blinova (sofia.blinova@epfl.ch)
 
+## Getting Started
+Before you run our scripts, make sure that you insert train.csv and test.csv into ../data. 
+
 # Scripts:
 
-run_baseline.py - file for counting base model results.
-
-run_dataproccess.py - file for counting model results with data processing.
+run.py  - file for counting base model results.
 Example
 ```
-python run_baseline.py -path ../data/train.csv
-python run_dataproccess.py -path ../data/train.csv
+python run.py -path ../data/train.csv
 ```
+
 BaselineModels.ipynb - notebook for analysis for base models.
 
 DataPreprocessedModels.ipynb  - notebook with dataprocessing.
 
-## Getting Started
+
