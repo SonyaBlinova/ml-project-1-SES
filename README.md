@@ -1,10 +1,10 @@
 # Machine Learning project-1: Team SES
 
 # Run:
-
-run.py  - file for counting base model results.
 run_baseline.py - file for counting base model results.
+
 run_dataproccess.py - file for counting model results with data processing.
+
 Example
 ```
 python run_baseline.py -path ../data/train.csv
