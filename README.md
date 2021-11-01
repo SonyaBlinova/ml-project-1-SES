@@ -11,7 +11,7 @@ Sofia Blinova (sofia.blinova@epfl.ch)
 run.py  - file for counting base model results.
 Example
 ```
-python run.py -path ../data/train.csv
+python run_baseline.py -path ../data/train.csv
 ```
 BaselineModels.ipynb - notebook for analysis for base models.
 
