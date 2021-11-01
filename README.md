@@ -4,13 +4,21 @@
 
 # Scripts
 
-[the models in run.py ]
+[run.py ]
+
+[plots.py]
 
 # Baseline Model 
-
 
 # Data pre-processing
 [we can add the vizualisations ]
 
-# Data expansion 
+[pre_process.py]
 
+# Data expansion :
+
+[cross validation of degree ]
+
+# describe the 2 notebooks [so impportant] :
+
+[expplain how to read the 2 notebooks ...]
