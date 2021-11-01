@@ -19,9 +19,5 @@ python run_dataproccess.py -path ../data/train.csv
 BaselineModels.ipynb - notebook for analysis for base models.
 
 
-## Getting Started
-Before you run our scripts, make sure that you place ```train.csv``` and ```submission.csv``` into ../data. 
-
-Matplotlib, Numpy and Seaborn(for vizualisation) are required.
 
 
