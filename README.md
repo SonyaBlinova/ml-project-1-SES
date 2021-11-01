@@ -26,6 +26,6 @@ This is a jupyter Notebook for analysis for base models
 
 ### ```DataPreprocessedModels.ipynb```  
 
-Notebook with dataprocessing and feature expansion.
+This is a jupyter Notebook where we improved the performances of our previous results(base models) with dataprocessing and feature expansion.
 
 
