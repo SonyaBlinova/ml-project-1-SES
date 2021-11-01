@@ -4,6 +4,16 @@ import seaborn as sns
 from utils import *
 
 def confusion_matrix(y_tests,y_preds):
+   """ 
+   plotting the confusion matrix, the accuracy and f1 score.
+      Parameters:
+    -----------
+    y_tests : ndarray
+        Expected labels.
+    y_preds : ndarray
+        Predicted labels.
+    """
+    
     c=[[],[]]
     c[0].append(np.sum((y_tests==-1) & (y_preds==-1)))
     c[1].append(np.sum((y_tests==-1) & (y_preds==1)))
@@ -25,6 +35,13 @@ def confusion_matrix(y_tests,y_preds):
     plt.show()
     
 def correlation_plot(data):
+   """ 
+   plotting the correlation matrix among the features using heatmap
+      Parameters:
+    -----------
+    data : ndarray
+    The training data 
+    """
     all_R = []
     for d in range(4):
         R = np.zeros((data[d].shape[1], data[d].shape[1]))
