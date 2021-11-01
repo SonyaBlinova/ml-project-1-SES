@@ -16,8 +16,10 @@ Example
 python run_baseline.py -path ../data/train.csv
 python run_dataproccess.py -path ../data/train.csv
 ```
-BaselineModels.ipynb - notebook for analysis for base models.
+# Notebooks
 
+BaselineModels.ipynb - notebook for analysis for base models.
+DataPreprocessedModels.ipynb - notebook for analysis models with data preproccessing.
 
 
 
