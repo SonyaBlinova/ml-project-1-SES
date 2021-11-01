@@ -192,7 +192,7 @@ def cross_validation_demo(type_, y, tx, bd_left, bd_right, seed, gammas=None, ma
                 elif type_ in ['RR']:
                     acc_ = cross_validation(type_=type_, y=y, x=tx, k_indices=k_indices, k=k, lambda_=param_2, degree=param_1)
                 elif type_ in ['RLR']:
-                    acc_ = cross_validation(type_=type_, y=y, x=tx, k_indices=k_indices, k=k, gamma = gammas, max_iters = max_iters, lambda_=param_2)
+                    acc_ = cross_validation(type_=type_, y=y, x=tx, k_indices=k_indices, k=k, gamma = gammas, max_iters = max_iters, lambda_=param_2, degree=param_1)
                 else:
                     raise TypeError(f"{type_} Wrong type!")
                 acc_batch.append(acc_)
