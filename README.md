@@ -1,6 +1,6 @@
 # Machine Learning project-1: Team SES
 
-The  Higgs  boson  is  an  elementary  particle  thatexplains  why  other  particles  have  mass.  It  is  important  to  beable  to  classify  whether  the  particle  decay  signature  belongsto the Higgs boson, because it fills other particles with a massconfirming  the  physical  theory.  In  this  report  we  introducesix  methods  for  this  classification  task.  After  the  trainingand  validation  of  our  classifiers,  we  achieved  the  a82.3% of accuracy  and 72.9% of  F1  score  with  the  Ridge  regressionon  the  official  testing  platform.  We  show  that  applying  some additional pre-processing of the dataset and polynomial feature expansion  improve  our  predictions.
+The  Higgs  boson  is  an  elementary  particle  thatexplains  why  other  particles  have  mass.  It  is  important  to  beable  to  classify  whether  the  particle  decay  signature  belongsto the Higgs boson, because it fills other particles with a massconfirming  the  physical  theory.  In  this  report  we  introducesix  methods  for  this  classification  task.  After  the  trainingand  validation  of  our  classifiers,  we  achieved  the  82.3% of accuracy  and 72.9% of  F1  score  with  the  Ridge  regressionon  the  official  testing  platform.  We  show  that  applying  some additional pre-processing of the dataset and polynomial feature expansion  improve  our  predictions.
 
 # Scripts:
 
