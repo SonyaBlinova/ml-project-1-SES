@@ -22,10 +22,10 @@ python run.py -path ../data/train.csv
 ## Results:
 ### ```BaselineModels.ipynb``` 
 
-notebook for analysis for base models.
+This is a jupyter Notebook for analysis for base models
 
 ### ```DataPreprocessedModels.ipynb```  
 
-notebook with dataprocessing and feature expansion.
+Notebook with dataprocessing and feature expansion.
 
 
