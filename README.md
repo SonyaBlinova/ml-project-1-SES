@@ -5,7 +5,10 @@ The  Higgs  boson  is  an  elementary  particle  thatexplains  why  other  parti
 # Scripts:
 
 [run.py ] - file for counting base model results.
-
+Example
+```
+python run.py -path ../data/train.csv
+```
 [plots.py]
 
 [utils.py ]
