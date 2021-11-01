@@ -21,7 +21,7 @@ def confusion_matrix(y_tests,y_preds):
     ax.set_xticklabels(expected, fontsize=20)
     ax.set_yticklabels(predicted, fontsize=20)
     ax.set_title('Confusion matrix', fontsize=20)
-    plt.savefig('data/confusion_matrix.png')
+    plt.savefig('pictures/confusion_matrix.png')
     plt.show()
     
 def correlation_plot(data):
@@ -41,6 +41,6 @@ def correlation_plot(data):
         ax[i].set_xlabel("features")
         ax[i].set_ylabel("features")
         ax[i].set_title('Correlation matrix group' + str(i+1))
-    plt.savefig('data/correlation_plot.png')
+    plt.savefig('pictures/correlation_plot.png')
     plt.show()
     

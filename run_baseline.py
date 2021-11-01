@@ -10,13 +10,15 @@ from validation import *
 from preproccess_utils import *
 import seaborn as sns
 import argparse
+import os
 sns.set()
 
+if not os.path.exists('pictures'):
+    os.mkdir('pictures')
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-path", type=str, dest="data_path", help="Path to folder", required=True)
 args = parser.parse_args()
-print(args)
 # loading data
 
 DATA_TRAIN_PATH = args.data_path#'../data/train.csv'
