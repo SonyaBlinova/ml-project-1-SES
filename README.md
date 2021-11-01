@@ -7,9 +7,11 @@ Saad Charkaoui (saad.charkaoui@epfl.ch)
 Sofia Blinova (sofia.blinova@epfl.ch)
 
 ## Getting Started
-Before you run our scripts, make sure that you insert train.csv and test.csv into ../data. 
+Before you run our scripts, make sure that you place train.csv and test.csv into ../data. 
 
-# Scripts:
+Matplotlib, Numpy and Seaborn(for vizualisation) are required.
+
+## Scripts:
 
 run.py  - file for counting base model results.
 Example
