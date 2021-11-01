@@ -2,23 +2,25 @@
 
 [quick intro ]
 
-# Scripts
+# Scripts:
 
 [run.py ]
 
 [plots.py]
 
-# Baseline Model 
+[utils.py ]
 
-# Data pre-processing
-[we can add the vizualisations ]
+[proj1_helpers.py] (maybe we need to merge it with utils ...)
 
-[pre_process.py]
 
-# Data expansion :
+# Data pre-processing:
 
-[cross validation of degree ]
+[pre_process_utils.py]
 
-# describe the 2 notebooks [so impportant] :
+
+# describe the 2 notebooks [so impportant, because we have all our vizualisations there...]:
 
 [expplain how to read the 2 notebooks ...]
+
+
+#  additional descriptions :  ....
