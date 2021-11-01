@@ -1,10 +1,4 @@
 # Machine Learning project-1: Team SES
-## Team Members :
-Ekatrina Trimbach (ekatrina.trimbach@epfl.ch)
-
-Saad Charkaoui (saad.charkaoui@epfl.ch)
-
-Sofia Blinova (sofia.blinova@epfl.ch)
 
 # Run:
 
@@ -22,5 +16,10 @@ BaselineModels.ipynb - notebook for analysis for base models.
 
 DataPreprocessedModels.ipynb - notebook for analysis models with data preproccessing.
 
+## Team Members :
+Ekatrina Trimbach (ekatrina.trimbach@epfl.ch)
 
+Saad Charkaoui (saad.charkaoui@epfl.ch)
+
+Sofia Blinova (sofia.blinova@epfl.ch)
 
