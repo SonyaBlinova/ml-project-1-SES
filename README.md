@@ -1,7 +1,9 @@
 # Machine Learning project-1: Team SES
 ## Team Members :
 Ekatrina Trimbach (ekatrina.trimbach@epfl.ch)
+
 Saad Charkaoui (saad.charkaoui@epfl.ch)
+
 Sofia Blinova (sofia.blinova@epfl.ch)
 
 # Scripts:
