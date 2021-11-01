@@ -216,7 +216,7 @@ def cross_validation_demo(type_, y, tx, bd_left, bd_right, seed, gammas=None, ma
     plt.legend(fontsize=15)
     plt.grid(True)
     ax.tick_params(axis='both', which='major', labelsize=13)
-    plt.savefig('pictures/cross_validation'+type_+'.png')
+    plt.savefig('cross_validation'+type_+'.pdf')
     
     
 def cross_validation_baseline(type_, y, x, k_indices, k, lambda_ = None, gamma = None, max_iters = None, degree=0):
